@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <Eigen/Dense>
-#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/gmp.hpp>
 
-using mp_int = boost::multiprecision::cpp_int;
+using mp_int = boost::multiprecision::mpz_int;
 using Matrix = Eigen::Matrix<mp_int, 2, 2>;
 
 Matrix power(const Matrix & mat, const int n) {
