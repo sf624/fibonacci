@@ -1,27 +1,21 @@
 #include <iostream>
 #include <string>
-#include <Eigen/Dense>
+#include <utility>
 #include <boost/multiprecision/gmp.hpp>
 
 using mp_int = boost::multiprecision::mpz_int;
-using Matrix = Eigen::Matrix<mp_int, 2, 2>;
 
-Matrix power(const Matrix & mat, const int n) {
-    if (n < 2) return mat;
-    Matrix ret = power(mat, n / 2);
-    ret *= ret;
-    if (n % 2 != 0) ret *= mat;
-    return ret;
+std::pair<mp_int, mp_int> fib_core(const int n) {
+    if (n == 0) return {0 , 1};
+    const auto [a, b] = fib_core(n / 2);
+    const mp_int c = a * (b * 2 - a);
+    const mp_int d = a * a + b * b;
+    if (n % 2 == 0) return {c, d};
+    else return {d, c + d};
 }
 
-mp_int fib(const int n) {
-    if (n < 2) return n;
-    Matrix transition_matrix;
-    transition_matrix <<
-        1, 1,
-        1, 0;
-    const Matrix trainsition_matrix_powered = power(transition_matrix, n - 1);
-    return trainsition_matrix_powered(0, 0);
+inline mp_int fib(const int n) {
+    return fib_core(n).first;
 }
 
 int main(int argc, char * argv[]) {
