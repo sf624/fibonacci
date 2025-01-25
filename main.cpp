@@ -1,21 +1,32 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <limits>
 #include <boost/multiprecision/gmp.hpp>
 
-using mp_int = boost::multiprecision::mpz_int;
+using mp_int = boost::multiprecision::mpz_int; // Multi precision int
+using fp_int = long long; // Fixed precision int
 
-std::pair<mp_int, mp_int> fib_core(const int n) {
-    if (n == 0) return {0 , 1};
-    const auto [a, b] = fib_core(n / 2);
-    const mp_int c = a * (b * 2 - a);
-    const mp_int d = a * a + b * b;
-    if (n % 2 == 0) return {c, d};
-    else return {d, c + d};
+template<typename T>
+constexpr T bit_length() {
+    return sizeof(T) * CHAR_BIT;
 }
 
-inline mp_int fib(const int n) {
-    return fib_core(n).first;
+inline mp_int fib(const fp_int n) {
+    mp_int a = 0;
+    mp_int b = 1;
+    for (fp_int i = bit_length<fp_int>() - 1; i >= 0; i--) {
+        const mp_int d = a * (b * 2 - a);
+        const mp_int e = a * a + b * b;
+        a = d;
+        b = e;
+        if (((n >> i) & 1) != 0) {
+            const mp_int c = a + b;
+            a = b;
+            b = c;
+        }
+    }
+    return a;
 }
 
 int main(int argc, char * argv[]) {
@@ -26,7 +37,7 @@ int main(int argc, char * argv[]) {
     const std::string s = argv[1];
     try {
         size_t end;
-        const int n = std::stoi(s, &end);
+        const fp_int n = std::stoll(s, &end);
         if (end < s.length()) {
             std::cerr << "Non integer input detected." << std::endl;
             return 1;
@@ -41,7 +52,7 @@ int main(int argc, char * argv[]) {
         std::cerr << "Non integer input detected." << std::endl;
         return 1;
     } catch (std::out_of_range &) {
-        std::cerr << "Integer too large. Should be smaller than " << INT_MAX << "." << std::endl;
+        std::cerr << "Integer is out of range. It should be non negative and equal or smaller than " << std::numeric_limits<fp_int>::max() << "." << std::endl;
         return 1;
     }
     return 0;

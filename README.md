@@ -33,7 +33,7 @@ using mp_int = boost::multiprecision::cpp_int;
 ## ビルド・実行
 
 ```bash
-$ g++ main.cpp -o fib -lgmp -O3 -std=c++17
+$ g++ main.cpp -o fib -lgmp -O3
 $ ./fib 10
 55
 ```
